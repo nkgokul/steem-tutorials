@@ -1,0 +1,52 @@
+<html>
+<head>
+  <style>
+    body {background: #0A0A0A; color: #0B0}
+    a {color : #0B0;}
+
+    div#steem-data-wrapper{
+      padding : 30 px;
+      line-height: 100 px;
+      font-size : 18 px;
+    }
+
+    div.stream-activity{
+      padding : 10 px;
+    }
+
+    #steem-data-wrapper div:nth-child(odd){
+      background-color:#000;
+    }
+    #steem-data-wrapper div:nth-child(even){
+      background-color:#111;
+    }
+  </style>
+
+  <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+  <script>
+
+  console.log('hello, is this working')
+
+  steem.api.setOptions({ url: 'https://api.steemit.com' });
+
+  var counter = 0;
+
+  steem.api.streamTransactions('head', function(err, result) {
+    let txType = result.operations[0][0]
+    let txData = result.operations[0][1]
+    jQuery('#steem-data-wrapper').prepend('<div class="stream-activity' + counter + '">' + counter++ + ' ' + txType + ' ' + JSON.stringify(txData).substring(0,300) + '</div>');
+  });
+  </script>
+</head>
+
+<body>
+  <div id="author-details">
+    <h3>This example was created by <a href="https://www.steemit.com/@gokulnk" target="_blank">@gokulnk</a></h3>
+  </div>
+  <div id="steem-data-wrapper">
+    <h2>Please wait while fetching the data from Steem Blockchian.</h2>
+  </div>
+</body>
+</html>
