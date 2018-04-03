@@ -1,13 +1,19 @@
 <html>
 <head>
   <style>
-    body {background: #0A0A0A; color: #0B0;}
+    body {background: #0A0A0A; color: #0B0}
     a {color : #0B0;}
-    font {color: #0B0;}
-    font-family: "Tahoma"; font-size=18pt;
-    #steem-data-wrapper div{
-      padding : 3px;
+
+    div#steem-data-wrapper{
+      padding : 30 px;
+      line-height: 100 px;
+      font-size : 18 px;
     }
+
+    div.stream-activity{
+      padding : 10 px;
+    }
+
     #steem-data-wrapper div:nth-child(odd){
       background-color:#000;
     }
@@ -30,7 +36,7 @@
   steem.api.streamTransactions('head', function(err, result) {
     let txType = result.operations[0][0]
     let txData = result.operations[0][1]
-    jQuery('#steem-data-wrapper').prepend('<div id="stream-activity' + counter + '">' + counter++ + ' ' + getMessagefromTransaction(txType, txData) + '</div>');
+    jQuery('#steem-data-wrapper').prepend('<div class="stream-activity' + counter + '">' + counter++ + ' ' + getMessagefromTransaction(txType, txData) + '</div>');
   });
 
   function getMessagefromTransaction(txType, txData) {
@@ -96,6 +102,9 @@
 </head>
 
 <body>
+  <div id="gokul-details">
+    <h3>This example was created by <a href="https://www.steemit.com/@gokulnk" target="_blank">@gokulnk</a></h3>
+  </div>
   <div id="steem-data-wrapper">
     <h2>Please wait while fetching the data from Steem Blockchian.</h2>
   </div>
