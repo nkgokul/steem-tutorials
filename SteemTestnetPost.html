@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      textarea{
+        padding: 5px;
+      }
+      div.row{
+        padding : 0 0 5px 0;
+      }
+      div.right-region {
+        background-color: #EEEEEE !important;
+        padding : 10px;
+      }
+      div.left-region {
+        background-color: #FAFAFA !important;
+      }
+      body{
+        background-color: #FEFEFE !important;
+      }
+      h1 {
+        padding : 5px;
+      }
+      div.container{
+        padding : 15px;
+
+      }
+    </style>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title></title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+  </head>
+  <body>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+    <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
+
+    <script>
+    console.log('hello, is this working');
+    // We define a function that takes one parameter named $.
+    var testing = 1;
+    var ACCOUNT_NAME;
+    var ACCOUNT_WIF;
+    if (true) {
+      /**
+      steem.config.set('websocket','wss://testnet.steem.vc');
+      steem.config.set('address_prefix', 'STX');
+      steem.config.set('chain_id', '79276aea5d4877d9a25892eaa01b0adf019d3e5cb12a97478df3298ccdd01673');
+      **/
+      steem.api.setOptions({ url: 'https://testnet.steem.vc' });
+      steem.api.setOptions({ address_prefix: 'STX' });
+      steem.api.setOptions({ chain_id: '79276aea5d4877d9a25892eaa01b0adf019d3e5cb12a97478df3298ccdd01673' });
+      ACCOUNT_NAME = 'steemtest'
+      ACCOUNT_WIF = '5J8fxGuPkSU5UFYWk2yeFkzAGhYSnYZpTQ95dHQLGosiajUnisy' //private
+    }else{
+      steem.api.setOptions({ url: 'https://api.steemit.com' });
+      ACCOUNT_NAME = 'cointracking'
+      ACCOUNT_WIF = '5KjK4AQAJHe1MydahxKMHkucJFpKD6qpkWPDqtTPcj4AogNrcbL'
+    }
+
+
+    var counter = 1;
+    const BASEURL = 'https://steemit.com/'
+$(document).ready(function() {
+    $('#poston-testnet').click(function(){
+    var postTitle = $("#steemTitle").val();
+    var postBody = $("#steemBody").val();
+    var postTags = $("#steemTags").val().split(" ");
+    console.log('Button Clicked', postTitle, postBody, postTags);
+    var commentPermlink = steem.formatter.commentPermlink(ACCOUNT_NAME, "testlink");
+
+    steem.broadcast.comment(ACCOUNT_WIF, "", "steemdev", ACCOUNT_NAME,
+                            commentPermlink, postTitle, postBody, {"tags":["testdev"]}, function(err, result) {
+                                console.log(err, result);
+                            });
+
+    });
+});
+
+    steem.api.setOptions({ url: 'https://api.steemit.com' });
+
+    function steemBlogFullurl(author, permlink) {
+        return BASEURL + '@' + author + '/' + permlink;
+    }
+
+    function steemBlogFullurl(author, permlink) {
+        return BASEURL + '@' + author + '/' + permlink;
+    }
+
+    function steemAuthorFullurl(author) {
+        return BASEURL + '@' + author;
+    }
+
+    function steemAuthorLink(author) {
+      return getLink('@' + author, steemAuthorFullurl(author));
+    }
+
+    function getLink(linkText, targetLink) {
+      if (typeof linkText == "undefined" || linkText == ''){
+        linkText = targetLink;
+      }else if (typeof targetLink === "undefined") {
+        targetLink = linkText;
+      }
+      return `<a href = ${targetLink} target="_blank">${linkText}</a>`;
+    }
+
+    </script>
+    <div class="container">
+      <h1>Steem Example for posting to Tesnet</h1>
+      <div class="row">
+        <div class="col-xs-12 col-md-7 left-region">
+          <div class="row">
+            Title: <input type="text" id="steemTitle" class="form-control"><br/>
+            Body :
+            <textarea id="steemBody" rows="4" style="min-width: 100%">Contents of your post should go here</textarea>
+            Tags: <input type="text" id="steemTags" name="fname"><br/><br/>
+            <div class="btn-group">
+              <button type="button" class="btn btn-primary" id="poston-testnet">Post</button>
+            </div>
+          </div>
+          <div class="row" id="profile-details-html"></div>
+          <div class="row" id="profile-details"></div>
+        </div>
+        <div class="col-xs-2 col-md-2 mid-region">
+        </div>
+        <div class="col-xs-10 col-md-3 right-region">
+          Follow <a href="https://www.steemit.com/@gokulnk" target="_blank">@gokulnk</a> for further updates.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

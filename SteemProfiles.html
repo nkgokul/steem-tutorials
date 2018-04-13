@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      textarea{
+        padding: 5px;
+      }
+      div.row{
+        padding : 0 0 5px 0;
+      }
+      div.right-region {
+        background-color: #FEFEFE !important;
+        padding : 10px;
+      }
+      div.left-region {
+        background-color: #FFFFFF;
+      }
+      body{
+        background-color: #FFFFFF;
+      }
+      h1 {
+        padding : 5px;
+      }
+      div.container{
+        padding : 15px;
+
+      }
+    </style>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title></title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+  </head>
+  <body>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+    <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
+    <script src="js/stmd.js"></script>
+    <script src="js/render.js"></script>
+    <script>
+    console.log('hello, is this working');
+    // We define a function that takes one parameter named $.
+    var reader = new stmd.DocParser();
+    var writer = new stmd.HtmlRenderer();
+    var usernames = "";
+    var handles;
+    var markDownHolder = "";
+    var counter = 1;
+    const BASEURL = 'https://steemit.com/'
+    const ACCOUNT_NAME = 'gokulnk'
+    var defaultImage = 'https://steemit-production-imageproxy-upload.s3.amazonaws.com/DQmckc76UaBZSicePvDG9dKwrgyS5GoZRxAnBZ8AzxtVwH8';
+$(document).ready(function() {
+    $('#fetch-profile').click(function(){
+      $('#profile-details').text("Fetching the details from Steem Blockchain");
+      handles = $('#handles').val();
+      usernames = handles.replace(new RegExp("@", "g"),"").replace(new RegExp(" ", "g"),"").split(",");
+        steem.api.getAccounts(usernames, function(err, result) {
+          if (err) {
+            console.log(err);
+          }else{
+            $('#profile-details').text("");
+            $('#profile-details-html').html('<textarea id="profile-details-html-textarea" rows="4" style="min-width: 100%">Filling HTML</textarea>');
+            result.forEach(function(userAccount, i){
+              console.log(getProfileHTML(userAccount));
+              profileDetails = getProfileHTML(userAccount, i);
+              markDownHolder += profileDetails;
+            });
+            $('#profile-details-html-textarea').html(markDownHolder);
+            var parsed = reader.parse(markDownHolder);
+            var markDownContent = writer.renderBlock(parsed);
+            $('#profile-details').html('<h4>Preview (Looks much better in Steemit)</h3>' + markDownContent);
+          }
+          //console.log(err, result);
+        });
+      });
+    $('#copy-html').click(function(){
+      var copyText = document.getElementById("profile-details-html-textarea");
+      copyText.select();
+      document.execCommand("Copy");
+    });
+});
+
+function getProfileHTML(userAccount, i){
+  profile = JSON.parse(userAccount.json_metadata).profile;
+  divBgColor = i % 2 == 0 ? "#FEFEFE" : "EDEDED";
+
+  console.log(userAccount);
+  console.log(profile);
+  profileImage = profile.profile_image || defaultImage;
+  profileHTML = `<div style="clear:left"></div><div style="width:100%;height: 100%;border:red 1px;background-color=${divBgColor};padding=2px"><div class="profile-image" style="float:left;display:inline-block;width: 100px;height: 100%;"><img width = "90px" height = "90px" src="${profileImage}"></div><div class="profile-details" style="float:left;display:inline-block;width: -moz-calc(100% - 100px);width: -webkit-calc(100% - 100px);width: calc(100% - 100px);height: 100%;">${profile.name || ""}(${userAccount.name || ""})<br/>${profile.about || ""}</div></div>`;
+
+  //divPullClass = i % 2 == 0 ? "pull-right" : "pull-left";
+  divPullClass = "pull-left";
+  profileSteemHTML = `<div class="${divPullClass}"><img src="https://steemitimages.com/100x100/${profileImage}"></div>${profile.name || ""}(${userAccount.name || ""})<br/>${profile.about || ""}<hr/>\n\n`;
+  return profileSteemHTML;
+}
+
+
+    steem.api.setOptions({ url: 'https://api.steemit.com' });
+
+    function steemBlogFullurl(author, permlink) {
+        return BASEURL + '@' + author + '/' + permlink;
+    }
+
+    function steemBlogFullurl(author, permlink) {
+        return BASEURL + '@' + author + '/' + permlink;
+    }
+
+    function steemAuthorFullurl(author) {
+        return BASEURL + '@' + author;
+    }
+
+    function steemAuthorLink(author) {
+      return getLink('@' + author, steemAuthorFullurl(author));
+    }
+
+    function getLink(linkText, targetLink) {
+      if (typeof linkText == "undefined" || linkText == ''){
+        linkText = targetLink;
+      }else if (typeof targetLink === "undefined") {
+        targetLink = linkText;
+      }
+      return `<a href = ${targetLink} target="_blank">${linkText}</a>`;
+    }
+
+    </script>
+    <div class="container">
+      <h1>Steem Profile List Builder</h1>
+      <div class="row">
+        <div class="col-xs-18 col-md-9 left-region">
+          <div class="row">
+            <div>
+                  Enter the list of user accounts whose profile details you need to fetch.
+            </div>
+            <textarea id="handles" rows="4" style="min-width: 100%">@gokulnk, @steemladder, @flauwy, @ned</textarea>
+            <div class="btn-group">
+              <button type="button" class="btn btn-primary" id="fetch-profile">Fetch Profile Details</button>
+              <button type="button" class="btn btn-primary" id="copy-html">Copy HTML</button>
+            </div>
+          </div>
+          <div class="row" id="profile-details-html"></div>
+          <div class="row" id="profile-details"></div>
+        </div>
+        <div class="col-xs-6 col-md-3 right-region">
+          Follow <a href="https://www.steemit.com/@gokulnk" target="_blank">@gokulnk</a> for further updates.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
