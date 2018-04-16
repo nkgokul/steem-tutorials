@@ -96,20 +96,14 @@ function getProfileHTML(userAccount, i){
   console.log(userAccount);
   console.log(profile);
   profileImage = profile.profile_image || defaultImage;
-  profileHTML = `<div style="clear:left"></div><div style="width:100%;height: 100%;border:red 1px;background-color=${divBgColor};padding=2px"><div class="profile-image" style="float:left;display:inline-block;width: 100px;height: 100%;"><img width = "90px" height = "90px" src="${profileImage}"></div><div class="profile-details" style="float:left;display:inline-block;width: -moz-calc(100% - 100px);width: -webkit-calc(100% - 100px);width: calc(100% - 100px);height: 100%;">${profile.name || ""}(${userAccount.name || ""})<br/>${profile.about || ""}</div></div>`;
+  profileTargetUrl = steemAuthorFullurl(userAccount.name);
+  profileHTML = `<div style="clear:left"></div><div style="width:100%;height: 100%;border:red 1px;background-color=${divBgColor};padding=2px"><div class="profile-image" style="float:left;display:inline-block;width: 100px;height: 100%;"><a href="${profileTargetUrl}"><img width = "90px" height = "90px" src="${profileImage}"></a></div><div class="profile-details" style="float:left;display:inline-block;width: -moz-calc(100% - 100px);width: -webkit-calc(100% - 100px);width: calc(100% - 100px);height: 100%;">${profile.name || ""}(${userAccount.name || ""})<br/>${profile.about || ""}</div></div>`;
 
   //divPullClass = i % 2 == 0 ? "pull-right" : "pull-left";
   divPullClass = "pull-left";
-  profileSteemHTML = `<div class="${divPullClass}"><img src="https://steemitimages.com/100x100/${profileImage}"></div>${profile.name || ""}(${userAccount.name || ""})<br/>${profile.about || ""}<hr/>\n\n`;
+  profileSteemHTML = `<div class="${divPullClass}"><a href="${profileTargetUrl}" target="_blank"><img src="https://steemitimages.com/100x100/${profileImage}"></a></div><b>${profile.name || ""} (<a href="${profileTargetUrl}" target="_blank">${userAccount.name}</a>)</b><br/>${profile.about || ""}<hr/>\n\n`;
   return profileSteemHTML;
 }
-
-
-    steem.api.setOptions({ url: 'https://api.steemit.com' });
-
-    function steemBlogFullurl(author, permlink) {
-        return BASEURL + '@' + author + '/' + permlink;
-    }
 
     function steemBlogFullurl(author, permlink) {
         return BASEURL + '@' + author + '/' + permlink;
