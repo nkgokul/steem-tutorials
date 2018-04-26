@@ -53,7 +53,9 @@
       steem.config.set('address_prefix', 'STX');
       steem.config.set('chain_id', '79276aea5d4877d9a25892eaa01b0adf019d3e5cb12a97478df3298ccdd01673');
       **/
-      steem.api.setOptions({ url: 'https://testnet.steem.vc' });
+      //steem.api.setOptions({ url: 'https://testnet.steem.vc' });
+      steem.api.setOptions({ url: 'wss://testnet.steem.vc' });
+      //steem.api.setOptions({ websocket: 'wss://testnet.steem.vc' });
       steem.api.setOptions({ address_prefix: 'STX' });
       steem.api.setOptions({ chain_id: '79276aea5d4877d9a25892eaa01b0adf019d3e5cb12a97478df3298ccdd01673' });
       ACCOUNT_NAME = 'steemtest'
@@ -67,11 +69,13 @@
     var counter = 1;
     const BASEURL = 'https://steemit.com/'
 $(document).ready(function() {
+  /**
     steem.api.streamTransactions('head', function(err, result) {
       let txType = result.operations[0][0];
       let txData = result.operations[0][1];
       //console.log(txType, txData);
     });
+    **/
 
     $('#poston-testnet').click(function(){
     var postTitle = $("#steemTitle").val();
