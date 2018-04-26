@@ -58,11 +58,21 @@
       steem.api.setOptions({ chain_id: '79276aea5d4877d9a25892eaa01b0adf019d3e5cb12a97478df3298ccdd01673' });
       ACCOUNT_NAME = 'steemtest'
       ACCOUNT_WIF = '5J8fxGuPkSU5UFYWk2yeFkzAGhYSnYZpTQ95dHQLGosiajUnisy' //private
+    }else{
+      steem.api.setOptions({ url: 'https://api.steemit.com' });
+      ACCOUNT_NAME = 'vergetips'
+      ACCOUNT_WIF = '5Kjybr7tzijb8nEcwkMe1CQhFDQqd5R3b1M7zAdf9svsvzgYHRZ'
     }
 
     var counter = 1;
     const BASEURL = 'https://steemit.com/'
 $(document).ready(function() {
+    steem.api.streamTransactions('head', function(err, result) {
+      let txType = result.operations[0][0];
+      let txData = result.operations[0][1];
+      //console.log(txType, txData);
+    });
+
     $('#poston-testnet').click(function(){
     var postTitle = $("#steemTitle").val();
     var postBody = $("#steemBody").val();
@@ -77,8 +87,6 @@ $(document).ready(function() {
 
     });
 });
-
-    steem.api.setOptions({ url: 'https://api.steemit.com' });
 
     function steemBlogFullurl(author, permlink) {
         return BASEURL + '@' + author + '/' + permlink;

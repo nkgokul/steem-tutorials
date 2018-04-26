@@ -59,7 +59,7 @@ $(document).ready(function() {
       $('#profile-details-html-textarea').text();
       markDownHolder = "";
       handles = $('#handles').val();
-      usernames = handles.replace(new RegExp("@", "g"),"").replace(new RegExp(" ", "g"),"").split(",");
+      usernames = handles.replace(new RegExp("@", "g"),"").replace(new RegExp(" ", "g"),"").replace(new RegExp("\n", "g"),",").split(",");
         steem.api.getAccounts(usernames, function(err, result) {
           if (err) {
             console.log(err);
@@ -90,18 +90,20 @@ $(document).ready(function() {
 });
 
 function getProfileHTML(userAccount, i){
-  profile = JSON.parse(userAccount.json_metadata).profile;
+  profile = (userAccount.json_metadata &&  JSON.parse(userAccount.json_metadata).profile) ? JSON.parse(userAccount.json_metadata).profile : null;
   divBgColor = i % 2 == 0 ? "#FEFEFE" : "EDEDED";
 
-  console.log(userAccount);
-  console.log(profile);
-  profileImage = profile.profile_image || defaultImage;
+  console.log(userAccount, 'userAccount');
+  console.log(profile, 'profile');
+  profileImage = profile ? profile.profile_image || defaultImage : defaultImage;
+  profileName = profile ? profile.name || "" : "";
+  profileAbout = profile ? profile.about || "" : "";
   profileTargetUrl = steemAuthorFullurl(userAccount.name);
-  profileHTML = `<div style="clear:left"></div><div style="width:100%;height: 100%;border:red 1px;background-color=${divBgColor};padding=2px"><div class="profile-image" style="float:left;display:inline-block;width: 100px;height: 100%;"><a href="${profileTargetUrl}"><img width = "90px" height = "90px" src="${profileImage}"></a></div><div class="profile-details" style="float:left;display:inline-block;width: -moz-calc(100% - 100px);width: -webkit-calc(100% - 100px);width: calc(100% - 100px);height: 100%;">${profile.name || ""}(${userAccount.name || ""})<br/>${profile.about || ""}</div></div>`;
+  profileHTML = `<div style="clear:left"></div><div style="width:100%;height: 100%;border:red 1px;background-color=${divBgColor};padding=2px"><div class="profile-image" style="float:left;display:inline-block;width: 100px;height: 100%;"><a href="${profileTargetUrl}"><img width = "90px" height = "90px" src="${profileImage}"></a></div><div class="profile-details" style="float:left;display:inline-block;width: -moz-calc(100% - 100px);width: -webkit-calc(100% - 100px);width: calc(100% - 100px);height: 100%;">${profileName}(${userAccount.name || ""})<br/>${profileAbout}</div></div>`;
 
   //divPullClass = i % 2 == 0 ? "pull-right" : "pull-left";
   divPullClass = "pull-left";
-  profileSteemHTML = `<div class="${divPullClass}"><a href="${profileTargetUrl}" target="_blank"><img src="https://steemitimages.com/100x100/${profileImage}"></a></div><b>${profile.name || ""} (<a href="${profileTargetUrl}" target="_blank">${userAccount.name}</a>)</b><br/>${profile.about || ""}<hr/>\n\n`;
+  profileSteemHTML = `<div class="${divPullClass}"><a href="${profileTargetUrl}" target="_blank"><img src="https://steemitimages.com/100x100/${profileImage}"></a></div><b>${profileName} (<a href="${profileTargetUrl}" target="_blank">${userAccount.name}</a>)</b><br/>${profileAbout || ""}<hr/>\n\n`;
   return profileSteemHTML;
 }
 
@@ -135,7 +137,7 @@ function getProfileHTML(userAccount, i){
             <div>
                   Enter the list of user accounts whose profile details you need to fetch.
             </div>
-            <textarea id="handles" rows="4" style="min-width: 100%">@gokulnk, @dragosroua, @barrydutton, @lexiconical</textarea>
+            <textarea id="handles" rows="4" style="min-width: 100%">@steemit1, @gokulnk, @dragosroua, @barrydutton, @lexiconical</textarea>
             <div class="btn-group">
               <button type="button" class="btn btn-primary" id="fetch-profile">Fetch Profile Details</button>
               <button type="button" class="btn btn-primary" id="copy-html">Copy HTML</button>
