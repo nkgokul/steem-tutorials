@@ -55,6 +55,11 @@ const ACCOUNT_NAME = "gokulnk";
 var defaultImage =
   "https://steemit-production-imageproxy-upload.s3.amazonaws.com/DQmckc76UaBZSicePvDG9dKwrgyS5GoZRxAnBZ8AzxtVwH8";
 $(document).ready(function() {
+  var hashParams = window.location.search.substr(1).split("&"); // substr(1) to remove the `#`
+  for (var i = 0; i < hashParams.length; i++) {
+    var p = hashParams[i].split("=");
+    document.getElementById(p[0]).value = decodeURIComponent(p[1]);
+  }
   $("#fetch-profile").click(function() {
     $("#profile-details").text("Fetching the details from Steem Blockchain");
     $("#profile-details-html-textarea").text();
@@ -143,6 +148,7 @@ function getLink(linkText, targetLink) {
   return `<a href = ${targetLink} target="_blank">${linkText}</a>`;
 }
 </script>
+
     <div class="container">
       <h1>Steem Profile List Builder</h1>
       <div class="row">
