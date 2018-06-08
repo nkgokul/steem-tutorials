@@ -40,95 +40,109 @@
     <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
 
     <script>
-    console.log('hello, is this working');
-    // We define a function that takes one parameter named $.
-    /**
+    console.log("hello, is this working");
+// We define a function that takes one parameter named $.
+/**
     var reader = new stmd.DocParser();
     var writer = new stmd.HtmlRenderer();
     **/
-    var usernames = "";
-    var handles;
-    var markDownHolder = "";
-    var counter = 1;
-    const BASEURL = 'https://steemit.com/'
-    const ACCOUNT_NAME = 'gokulnk'
-    var defaultImage = 'https://steemit-production-imageproxy-upload.s3.amazonaws.com/DQmckc76UaBZSicePvDG9dKwrgyS5GoZRxAnBZ8AzxtVwH8';
+var usernames = "";
+var handles;
+var markDownHolder = "";
+var counter = 1;
+const BASEURL = "https://steemit.com/";
+const ACCOUNT_NAME = "gokulnk";
+var defaultImage =
+  "https://steemit-production-imageproxy-upload.s3.amazonaws.com/DQmckc76UaBZSicePvDG9dKwrgyS5GoZRxAnBZ8AzxtVwH8";
 $(document).ready(function() {
-    $('#fetch-profile').click(function(){
-      $('#profile-details').text("Fetching the details from Steem Blockchain");
-      $('#profile-details-html-textarea').text();
-      markDownHolder = "";
-      handles = $('#handles').val();
-      usernames = handles.replace(new RegExp("@", "g"),"").replace(new RegExp(" ", "g"),"").replace(new RegExp("\n", "g"),",").split(",");
-        steem.api.getAccounts(usernames, function(err, result) {
-          if (err) {
-            console.log(err);
-          }else{
-            $('#profile-details').text("");
-            $('#profile-details-html').html('<textarea id="profile-details-html-textarea" rows="4" style="min-width: 100%">Filling HTML</textarea>');
-            result.forEach(function(userAccount, i){
-              console.log(getProfileHTML(userAccount));
-              profileDetails = getProfileHTML(userAccount, i);
-              markDownHolder += profileDetails;
-            });
-            $('#profile-details-html-textarea').html(markDownHolder);
-            /**
+  $("#fetch-profile").click(function() {
+    $("#profile-details").text("Fetching the details from Steem Blockchain");
+    $("#profile-details-html-textarea").text();
+    markDownHolder = "";
+    handles = $("#handles").val();
+    usernames = handles
+      .replace(new RegExp("@", "g"), "")
+      .replace(new RegExp(" ", "g"), "")
+      .replace(new RegExp("\n", "g"), ",")
+      .split(",");
+    steem.api.getAccounts(usernames, function(err, result) {
+      if (err) {
+        console.log(err);
+      } else {
+        $("#profile-details").text("");
+        $("#profile-details-html").html(
+          '<textarea id="profile-details-html-textarea" rows="4" style="min-width: 100%">Filling HTML</textarea>'
+        );
+        result.forEach(function(userAccount, i) {
+          console.log(getProfileHTML(userAccount));
+          profileDetails = getProfileHTML(userAccount, i);
+          markDownHolder += profileDetails;
+        });
+        $("#profile-details-html-textarea").html(markDownHolder);
+        /**
             var parsed = reader.parse(markDownHolder);
             var markDownContent = writer.renderBlock(parsed);
             **/
-            //$('#profile-details').html('<h4>Preview (Looks much better in Steemit)</h3>' + markDownContent);
-            $('#profile-details').html('<h4>Preview (Looks much better in Steemit)</h3>' + markDownHolder);
-          }
-          //console.log(err, result);
-        });
-      });
-    $('#copy-html').click(function(){
-      var copyText = document.getElementById("profile-details-html-textarea");
-      copyText.select();
-      document.execCommand("Copy");
+        //$('#profile-details').html('<h4>Preview (Looks much better in Steemit)</h3>' + markDownContent);
+        $("#profile-details").html(
+          "<h4>Preview (Looks much better in Steemit)</h3>" + markDownHolder
+        );
+      }
+      //console.log(err, result);
     });
+  });
+  $("#copy-html").click(function() {
+    var copyText = document.getElementById("profile-details-html-textarea");
+    copyText.select();
+    document.execCommand("Copy");
+  });
 });
 
-function getProfileHTML(userAccount, i){
-  profile = (userAccount.json_metadata &&  JSON.parse(userAccount.json_metadata).profile) ? JSON.parse(userAccount.json_metadata).profile : null;
+function getProfileHTML(userAccount, i) {
+  profile =
+    userAccount.json_metadata && JSON.parse(userAccount.json_metadata).profile
+      ? JSON.parse(userAccount.json_metadata).profile
+      : null;
   divBgColor = i % 2 == 0 ? "#FEFEFE" : "EDEDED";
 
-  console.log(userAccount, 'userAccount');
-  console.log(profile, 'profile');
+  console.log(userAccount, "userAccount");
+  console.log(profile, "profile");
   profileImage = profile ? profile.profile_image || defaultImage : defaultImage;
   profileName = profile ? profile.name || "" : "";
   profileAbout = profile ? profile.about || "" : "";
   profileTargetUrl = steemAuthorFullurl(userAccount.name);
-  profileHTML = `<div style="clear:left"></div><div style="width:100%;height: 100%;border:red 1px;background-color=${divBgColor};padding=2px"><div class="profile-image" style="float:left;display:inline-block;width: 100px;height: 100%;"><a href="${profileTargetUrl}"><img width = "90px" height = "90px" src="${profileImage}"></a></div><div class="profile-details" style="float:left;display:inline-block;width: -moz-calc(100% - 100px);width: -webkit-calc(100% - 100px);width: calc(100% - 100px);height: 100%;">${profileName}(${userAccount.name || ""})<br/>${profileAbout}</div></div>`;
+  profileHTML = `<div style="clear:left"></div><div style="width:100%;height: 100%;border:red 1px;background-color=${divBgColor};padding=2px"><div class="profile-image" style="float:left;display:inline-block;width: 100px;height: 100%;"><a href="${profileTargetUrl}"><img width = "90px" height = "90px" src="${profileImage}"></a></div><div class="profile-details" style="float:left;display:inline-block;width: -moz-calc(100% - 100px);width: -webkit-calc(100% - 100px);width: calc(100% - 100px);height: 100%;">${profileName}(${userAccount.name ||
+    ""})<br/>${profileAbout}</div></div>`;
 
   //divPullClass = i % 2 == 0 ? "pull-right" : "pull-left";
   divPullClass = "pull-left";
-  profileSteemHTML = `<div class="${divPullClass}"><a href="${profileTargetUrl}" target="_blank"><img src="https://steemitimages.com/100x100/${profileImage}"></a></div><b>${profileName} (<a href="${profileTargetUrl}" target="_blank">${userAccount.name}</a>)</b><br/>${profileAbout || ""}<hr/>\n\n`;
+  profileSteemHTML = `<div class="${divPullClass}"><a href="${profileTargetUrl}" target="_blank"><img src="https://steemitimages.com/100x100/${profileImage}"></a></div><b>${profileName} (<a href="${profileTargetUrl}" target="_blank">${
+    userAccount.name
+  }</a>)</b> userid:${userAccount.id}<br/>${profileAbout || ""}<hr/>\n\n`;
   return profileSteemHTML;
 }
 
-    function steemBlogFullurl(author, permlink) {
-        return BASEURL + '@' + author + '/' + permlink;
-    }
+function steemBlogFullurl(author, permlink) {
+  return BASEURL + "@" + author + "/" + permlink;
+}
 
-    function steemAuthorFullurl(author) {
-        return BASEURL + '@' + author;
-    }
+function steemAuthorFullurl(author) {
+  return BASEURL + "@" + author;
+}
 
-    function steemAuthorLink(author) {
-      return getLink('@' + author, steemAuthorFullurl(author));
-    }
+function steemAuthorLink(author) {
+  return getLink("@" + author, steemAuthorFullurl(author));
+}
 
-    function getLink(linkText, targetLink) {
-      if (typeof linkText == "undefined" || linkText == ''){
-        linkText = targetLink;
-      }else if (typeof targetLink === "undefined") {
-        targetLink = linkText;
-      }
-      return `<a href = ${targetLink} target="_blank">${linkText}</a>`;
-    }
-
-    </script>
+function getLink(linkText, targetLink) {
+  if (typeof linkText == "undefined" || linkText == "") {
+    linkText = targetLink;
+  } else if (typeof targetLink === "undefined") {
+    targetLink = linkText;
+  }
+  return `<a href = ${targetLink} target="_blank">${linkText}</a>`;
+}
+</script>
     <div class="container">
       <h1>Steem Profile List Builder</h1>
       <div class="row">
